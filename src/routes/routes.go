@@ -22,6 +22,7 @@ func RegisterRoutes(r *gin.Engine) {
 	authRoot.POST("/post", controllers.Post.Create)
 	authRoot.PUT("/post", controllers.Post.Edit)
 	authRoot.GET("/post/:id", controllers.Post.Get)
+	authRoot.POST("/post/comment/:id", controllers.Post.CreateComment)
 	authRoot.GET("/post/comment/:id", controllers.Post.GetComments)
 	authRoot.DELETE("/post/comment/:id", controllers.Post.DeleteComment)
 	authRoot.GET("/post/list", controllers.Post.List)

@@ -8,20 +8,28 @@ import (
 
 type Post struct {
 	gorm.Model
-	Title    string    `json:"title"`
-	Content  string    `json:"content"`
-	Comments []Comment `gorm:"foreignKey:PostAuthor;constraint:OnDelete:CASCADE;" json:"comments"`
-	Author   uint      `json:"author"`
-	User     *User     `gorm:"foreignKey:Author" json:"user,omitempty"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
+	// Comments: 使用 Comment.PostAuthor 作为外键，Post 删除时级联删除评论
+	Comments []Comment `gorm:"foreignKey:PostAuthor;constraint:OnDelete:CASCADE;" json:"comments,omitempty"`
+
+	// Author 存储 post 所属用户的 ID
+	Author uint `json:"author"`
+	// 指定 User 的外键为 Author（即 Author -> users.id）
+	User *User `gorm:"foreignKey:Author;references:ID" json:"user,omitempty"`
 }
 
 type Comment struct {
 	gorm.Model
 	Content    string `json:"content"`
 	PostAuthor uint   `json:"post_author"`
-	Post       *Post  `gorm:"foreignKey:PostAuthor" json:"post,omitempty"`
-	Commenter  uint   `json:"commenter"`
-	User       *User  `gorm:"foreignKey:Commenter" json:"user,omitempty"`
+	// 指定 Post 的外键为 PostAuthor
+	Post *Post `gorm:"foreignKey:PostAuthor;references:ID" json:"post,omitempty"`
+
+	// Commenter 存储评论者的用户 ID
+	Commenter uint `json:"commenter"`
+	// 指定 User 的外键为 Commenter（即 Commenter -> users.id）
+	User *User `gorm:"foreignKey:Commenter;references:ID" json:"user,omitempty"`
 }
 
 func CreatePost(p *Post) (err error) {

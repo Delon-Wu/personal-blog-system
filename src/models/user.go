@@ -12,8 +12,10 @@ type User struct {
 	Username string `gorm:"unique;not null" json:"username"`
 	Email    string `gorm:"unique;not null" json:"email"`
 	Password string `gorm:"not null" json:"password"`
-	Posts    []Post
-	Comments []Comment
+	// Posts: 通过 Post.Author 与 User.ID 关联
+	Posts []Post `gorm:"foreignKey:Author" json:"posts,omitempty"`
+	// Comments: 通过 Comment.Commenter 与 User.ID 关联
+	Comments []Comment `gorm:"foreignKey:Commenter" json:"comments,omitempty"`
 }
 
 // HashPassword 加密密码
