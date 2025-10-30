@@ -34,6 +34,9 @@ func (u *User) CheckPassword(password string) error {
 // CreateUser creates a new user record. Returns an error on failure.
 func CreateUser(user *User) error {
 	db := database.DB
+	if err := user.HashPassword(); err != nil {
+		return err
+	}
 
 	return db.Create(user).Error
 }
@@ -43,7 +46,7 @@ func GetUserByID(id uint) (*User, error) {
 	db := database.DB
 
 	var user User
-	if err := db.Preload("Posts").Preload("Comments").First(&user, id).Error; err != nil {
+	if err := db.Preload("Posts").Preload("Comments").Omit("password").First(&user, id).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil

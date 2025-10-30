@@ -1,57 +1,58 @@
 package controllers
 
 import (
-	"net/http"
+	"errors"
+	"personal-blog-system/src/database"
 	"personal-blog-system/src/models"
 	"personal-blog-system/src/utils"
 	"time"
-
-	"golang.org/x/crypto/bcrypt"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-// LoginRequest 登录请求
-type LoginRequest struct {
-	Name     string `json:"name" binding:"required"`
+// Auth 校验
+var Auth = AuthController{}
+
+type AuthController struct {
+	BaseController
+	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
 
-// LoginHandler 示例：校验用户名+密码，返回 JWT
-func LoginHandler(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var req LoginRequest
-		if err := c.ShouldBindJSON(&req); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-		var user models.User
-		if err := db.Where("name = ?", req.Name).First(&user).Error; err != nil {
-			if err == gorm.ErrRecordNotFound {
-				c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
-				return
-			}
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "db error"})
-			return
-		}
-		// 假设用户密码使用 bcrypt 存储在 user.PasswordHash
-		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
-			return
-		}
-		// 签发 token（有效期 7 天）
-		token, err := utils.GenerateToken(user.ID, 168*time.Hour)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{"token": token, "expires_in": 24 * 3600})
+// Login 示例：校验用户名+密码，返回 JWT
+func (a *AuthController) Login(c *gin.Context) {
+	db := database.DB
+	var req AuthController
+	if err := c.ShouldBindJSON(&req); err != nil {
+		a.Error(c, err.Error())
+		return
 	}
+	var user models.User
+	if err := db.Where("username = ?", req.Username).First(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			a.Error(c, "No this user")
+			return
+		}
+		a.Error(c, "db error")
+		return
+	}
+	// 假设用户密码使用 bcrypt 存储在 user.PasswordHash
+	if err := user.CheckPassword(req.Password); err != nil {
+		a.Error(c, "Account or Password error")
+		return
+	}
+	// 签发 token（有效期 7 天）
+	token, err := utils.GenerateToken(user.ID, 168*time.Hour)
+	if err != nil {
+		a.Error(c, "failed to generate token")
+		return
+	}
+	a.Success(c, gin.H{"token": token, "expires_in": 7 * 24 * 3600})
 }
 
 // GetUserID 从 context 获取 userID 的辅助函数
-func GetUserID(c *gin.Context) (uint, bool) {
+func (a *AuthController) GetUserID(c *gin.Context) (uint, bool) {
 	v, ok := c.Get("userID")
 	if !ok {
 		return 0, false

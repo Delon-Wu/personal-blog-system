@@ -16,6 +16,8 @@ type Config struct {
 	DatabasePassword string
 	DatabaseName     string
 
+	Port string
+
 	JwtSecret string
 }
 
@@ -31,6 +33,10 @@ func Connect() {
 	AppConfig.DatabaseUser = os.Getenv("DB_USER")
 	AppConfig.DatabasePassword = os.Getenv("DB_PASSWORD")
 	AppConfig.DatabaseName = os.Getenv("DB_NAME")
+
+	if AppConfig.Port = os.Getenv("PORT"); AppConfig.Port == "" {
+		AppConfig.Port = "8080"
+	}
 
 	AppConfig.DatabaseURL = fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s",

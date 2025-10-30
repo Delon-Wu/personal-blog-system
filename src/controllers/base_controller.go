@@ -6,6 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var Base = BaseController{}
+
 type BaseController struct{}
 
 func (bc *BaseController) Success(c *gin.Context, data interface{}) {
