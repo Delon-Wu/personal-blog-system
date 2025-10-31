@@ -14,8 +14,12 @@ personal-blog-system
 │   │   └── gorm.go            # Initializes GORM database connection
 │   ├── models                 # Data models
 │   │   └── user.go            # User model definition
+│   │   └── post.go            # Post model definition
 │   ├── controllers            # Request handlers
-│   │   └── user_controller.go  # User-related request handling
+│   │   └── auth_controller.go # Auth-related request handling
+│   │   └── user_controller.go # User-related request handling
+│   │   └── base_controller.go # Base-related request handling
+│   │   └── post_controller.go # Post-related request handling
 │   ├── routes                 # API routes
 │   │   └── routes.go          # Sets up application routes
 │   └── migrations             # Database migrations
@@ -28,14 +32,15 @@ personal-blog-system
 
 ## Getting Started
 
-### Prerequisites
+### 准备
 
 - Go (version 1.16 or later)
 - Gin
 - GORM
-- A database (e.g., MySQL, PostgresSQL)
+- A database (MySQL) （创建mysql表，表名：personal_blog_system）
+- .env （参照example.env配置环境变量文件）
 
-### Installation
+### 依赖安装
 
 1. Clone the repository:
 
@@ -52,7 +57,7 @@ personal-blog-system
 
 3. Set up your database and update the `.env` file with your database connection string.
 
-### Running the Application
+### 运行
 
 To run the application, execute the following command:
 
@@ -64,8 +69,17 @@ The server will start on `http://localhost:8080`.
 
 ### API Endpoints
 
-- `POST /users` - Create a new user
-- `GET /users/:id` - Get user information by ID
+`POST   /api/login`                登录  
+`POST   /api/users`                注册  
+`GET    /api/users/:id`            查询用户信息  
+`POST   /api/post`                 提交文章  
+`PUT    /api/post`                 修改文章  
+`GET    /api/post/:id`             获取文章信息
+`POST   /api/post/comment/:id`     创建评论
+`GET    /api/post/comment/:id`     获取评论信息  
+`DELETE /api/post/comment/:id`     删除评论  
+`GET    /api/post/list`            获取文章列表  
+`DELETE /api/post/:id`             删除文章  
 
 ### License
 
