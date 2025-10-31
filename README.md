@@ -69,17 +69,20 @@ The server will start on `http://localhost:8080`.
 
 ### API Endpoints
 
-`POST   /api/login`                登录  
-`POST   /api/users`                注册  
-`GET    /api/users/:id`            查询用户信息  
-`POST   /api/post`                 提交文章  
-`PUT    /api/post`                 修改文章  
-`GET    /api/post/:id`             获取文章信息
-`POST   /api/post/comment/:id`     创建评论
-`GET    /api/post/comment/:id`     获取评论信息  
-`DELETE /api/post/comment/:id`     删除评论  
-`GET    /api/post/list`            获取文章列表  
-`DELETE /api/post/:id`             删除文章  
+
+| methoe | path    | 接口名 | 传参（JSON） | 成功响应                                                                                                                                                                                                                           |
+| -----|---------| --- | -------- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|`POST |   /api/login`              |  登录  |        `{"username": "Joey","password": "123456"}`  | `{"data": {"expires_in": 604800,"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzYyNDk2MTk4LCJpYXQiOjE3NjE4OTEzOTh9.GIwwv92rS82B1NGVYCXhY-5mea-Gs9lR69WcrqWf3mk"},"error": null,"message": "success" }` |  
+|`POST |   /api/users`              |  注册  |        `{"username": "Joey","password": "123456","email":"123@qq.com"}` | `{"data": null,"error": null,"message": "success"}`                                                                                                                                                                            |   
+|`GET |    /api/users/:id`          |  查询用户信息  | 无 | `{"data":{"id":1,"username":"Joey","email":"1243@qq.com","created_at":"2025-10-31T14:16:23.048+08:00","updated_at":"2025-10-31T14:16:23.048+08:00","posts":[],"comments":[]},"error":null,"message":"success"}`                |  
+|`POST |   /api/post`               |  提交文章  |    `{"title": "Hello","content": "world"}`    | `{"data": null,"error": null,"message": "success"}`                                                                                                                                                                            |   
+|`PUT |    /api/post/:id`           |  修改文章  |    `{"title": "Hello","content": "world"}`   | `{"data": null,"error": null,"message": "success"}`                                                                                                                                                                            |   
+|`GET |    /api/post/:id`           |  获取文章信息  | 无 |                                                                                                                                                                                                                                |
+|`POST |   /api/post/comment/:id`   |  创建评论  |     `{"content": "world"}`       | `{"data": null,"error": null,"message": "success"}`                                                                                                                                                                            |
+|`GET |    /api/post/comment/:id`   |  获取评论信息  | 无 |                                                                                                                                                                                                                                |
+|`DELETE | /api/post/comment/:id`   |  删除评论  |     无 |                                                                                                                                                                                                                                |
+|`GET |    /api/post/list`          |  获取文章列表  | 无 |                                                                                                                                                                                                                                |
+|`DELETE | /api/post/:id`           |  删除文章  |     无 |                                                                                                                                                                                                                                |
 
 ### License
 
